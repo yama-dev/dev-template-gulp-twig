@@ -1,0 +1,97 @@
+@charset "utf-8";
+
+// Set Reset-Css
+
+// http://meyerweb.com/eric/tools/css/reset/ 
+// @import "./vender_sass/eric_reset";
+
+// http://html5doctor.com/
+@import "./vender_sass/html5reset";
+
+// @jonathantneal/sanitize
+// @import "./vender_sass/sanitize";
+
+// @necolas/normalize.css 
+// @import "./vender_sass/normalize";
+
+// https://github.com/yama-dev
+@import "./vender_sass/reset";
+
+// Debug
+// @debug "style.scss";
+
+// Style Switching Elements
+@media screen and (min-width: 768px) {
+  .is-pc {
+    display: block;
+  }
+  .is-sp {
+    display: none;
+  }
+  .is-pc-inline {
+    display: inline-block;
+  }
+  .is-sp-inline {
+    display: none;
+  }
+}
+@media screen and (max-width: 767px) {
+  .is-pc {
+    display: none;
+  }
+  .is-sp {
+    display: block;
+  }
+  .is-pc-inline {
+    display: none;
+  }
+  .is-sp-inline {
+    display: inline-block;
+  }
+}
+
+// Style Image Fit
+img {
+  max-width: 100%;
+  display: block;
+  vertical-align: middle;
+}
+
+// Import Modules.
+// @import "./modules/settings";
+// @import "./modules/layout";
+// @import "./modules/hover";
+// @import "./modules/button";
+
+// 3device (PC、Tablet、Smartphone)
+@media screen and (max-width: 980px) {
+}
+@media screen and (max-width: 650px) {
+}
+@media screen and (max-width: 480px) {
+}
+
+// Tablet displays PC layout
+@media screen and (max-width: 767px) {
+}
+
+// Tablet displays Smartphone layout
+@media screen and (max-width: 768px) {
+}
+
+// In case of portrait display
+@media screen and (orientation: portrait) {
+}
+// In case of landscape display
+@media screen and (orientation: landscape) {
+}
+
+// One Click CSS
+// -> https://css.miugle.info/
+
+// CSS validation
+// -> https://jigsaw.w3.org/css-validator/validator.html.ja
+
+// Style Sheet
+// -> style.scss
+

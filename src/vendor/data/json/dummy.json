@@ -1,0 +1,204 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "title": "Lady Justo tempus eu aliquam.",
+      "url": "",
+      "message1": "Proin lectus nunc lacinia.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Dui consectetur lacinia eget eros. Ornare consectetur lacus tortor consectetur.",
+      "publishedAt": "2019/09/10 11:26",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 1,
+      "title": "Lady Ligula curabitur lectus tortor.",
+      "url": "",
+      "message1": "Leo ornare etiam a.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Pellentesque tincidunt quisque risus hendrerit ultrices quisque maximus viverra sem.",
+      "publishedAt": "2018/10/14 09:20",
+      "new": false,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Prof Iaculis blandit e imperdiet.",
+      "url": "",
+      "message1": "Aliquam aliquam lacinia dignissim.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>A auctor neque at arcu, natoque au pulvinar nam purus.",
+      "publishedAt": "2019/02/10 06:57",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Lord Laoreet dolor pellentesque curabitur.",
+      "url": "",
+      "message1": "Augue quis lacinia cras.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Eros iaculis consequat pharetra vel ultricies. Condimentum pharetra tristique elementum.",
+      "publishedAt": "2019/06/22 11:38",
+      "new": false,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Dr Elit gravida magna sollicitudin.",
+      "url": "",
+      "message1": "Vitae non orci donec.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Maecenas adipiscing adipiscing dictum cras maecenas morbi ut pulvinar pharetra.",
+      "publishedAt": "2018/12/09 08:21",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Lord Eget purus augue blandit.",
+      "url": "",
+      "message1": "Et nibh fringilla adipiscing.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Ipsum diam tristique at cursus. Suscipit hendrerit pulvinar magna ultricies.",
+      "publishedAt": "2019/07/23 10:29",
+      "new": false,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Lady Sem posuere sodales nam.",
+      "url": "",
+      "message1": "Lacinia enim blandit e.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Elementum diam dolor eget maecenas, accumsan quisque ultricies tempus risus.",
+      "publishedAt": "2018/10/17 12:56",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Mr Lacus ligula lectus porttitor.",
+      "url": "",
+      "message1": "Nulla lacinia maecenas velit.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Ornare nulla risus tempor dolor, lorem natoque eros nisl vitae.",
+      "publishedAt": "2019/06/14 11:20",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Lord Leo mauris proin nulla.",
+      "url": "",
+      "message1": "Dignissim dictum mi tortor.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Dolor mauris faucibus aliquet posuere mattis, euismod vehicula nisl metus.",
+      "publishedAt": "2019/12/30 09:30",
+      "new": false,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Mrs Natoque mattis etiam ut.",
+      "url": "",
+      "message1": "Quisque cras euismod non.<br><img src=\"https://placehold.jp/900x200.png\"><a href=\"https://github.com/yama-dev\" title=\"\" target=\"_blank\">https://github.com/yama-dev</a><br/>Vitae sit laoreet in turpis. Natoque sit quis mauris mauris.",
+      "publishedAt": "2018/11/12 07:23",
+      "new": true,
+      "ctags": [
+        "NEWS"
+      ],
+      "site": {
+        "code": "website",
+        "name": "サンプルサイト",
+        "genre": "shop"
+      },
+      "images": [
+        "img0.png",
+        "img1.png"
+      ]
+    }
+  ]
+}
