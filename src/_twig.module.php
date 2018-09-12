@@ -55,11 +55,12 @@ $twig = new Twig_Environment($loader, array(
 ));
 $twig->addGlobal('env', 'develop');
 
-$json = file_get_contents('./vendor/data/json/dummy.json');
+$json_path = './vendor/data/json/dummy.json';
+$json = file_get_contents($json_path);
 $jsonArray = json_decode($json, true);
 
 $service = array(
-  'path' => './vendor/data/json/dummy.json',
+  'path' => $json_path,
   'vendor_data_samplejson' => $jsonArray
 );
 $twig->addGlobal('service', $service);
