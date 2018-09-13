@@ -1,5 +1,7 @@
 <?php
 
+define('JSON_PATH', '/vendor/data/json/dummy.json');
+
 // Set include dir.
 $arrayIncDir = array(
   '/assets/inc',
@@ -39,15 +41,15 @@ function dir_copy($dir_name, $new_dir) {
   return true;
 }
 foreach ($arrayIncDir as $item) {
-  dir_copy('.'.$item, './vendor/data/html'.$item);
+  dir_copy($_SERVER['DOCUMENT_ROOT'].$item, $_SERVER['DOCUMENT_ROOT'] . '/vendor/data/html'.$item);
 }
 
 // Load our autoloader
-require_once __DIR__.'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 
 // Specify our Twig templates location
-$loader = new Twig_Loader_Filesystem(__DIR__.'/');
-$loader->addPath('vendor/data/');
+$loader = new Twig_Loader_Filesystem($_SERVER['DOCUMENT_ROOT'] . '/');
+$loader->addPath($_SERVER['DOCUMENT_ROOT'] . '/vendor/data/');
 
  // Instantiate our Twig
 $twig = new Twig_Environment($loader, array(
@@ -55,7 +57,7 @@ $twig = new Twig_Environment($loader, array(
 ));
 $twig->addGlobal('env', 'develop');
 
-$json_path = './vendor/data/json/dummy.json';
+$json_path = $_SERVER['DOCUMENT_ROOT'] . JSON_PATH;
 $json = file_get_contents($json_path);
 $jsonArray = json_decode($json, true);
 
@@ -84,7 +86,7 @@ if( preg_match("/(\.html|\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|
   $request_uri_fix = preg_replace("/(.*)\/.*$/", '$1/'.$CONFIG['default_file'], $request_uri);
 }
 
-if(!file_exists(__DIR__.$request_uri_fix)){
+if(!file_exists($_SERVER['DOCUMENT_ROOT'].$request_uri_fix)){
   header('HTTP/1.0 404 Not Found');
   exit;
 }
@@ -97,7 +99,7 @@ if( !preg_match("/(\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|
   // Render our file.
   $mine_type = get_minetype($request_uri_fix);
   header("Content-type: ".$mine_type."; charset=utf-8");
-  include_once(__DIR__.$request_uri_fix);
+  include_once($_SERVER['DOCUMENT_ROOT'].$request_uri_fix);
 }
 
 
