@@ -17,7 +17,7 @@
     <h1>SECTION TITLE</h1>
     <ul>
 {# データ取得 #}
-{% set data = service.vendor_data_samplejson %}
+{% set data = service.json %}
       {% for news in data.items %}
       <li id="{{ news.id }}">
         <hr>

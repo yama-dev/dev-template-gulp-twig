@@ -1,5 +1,8 @@
 <?php
 
+$request_uri = $_SERVER['REQUEST_URI'];
+$request_query = $_SERVER['QUERY_STRING'];
+
 define('JSON_PATH', '/vendor/data/json/dummy.json');
 
 // Set include dir.
@@ -28,8 +31,7 @@ function dir_copy($dir_name, $new_dir) {
         }
         if (is_dir($dir_name . "/" . $file)) {
           dir_copy($dir_name . "/" . $file, $new_dir . "/" . $file);
-        }
-        else {
+        } else {
           if(time() - 10 >= filemtime($new_dir . "/" . $file)){
             copy($dir_name . "/" . $file, $new_dir . "/" . $file);
           }
@@ -40,8 +42,10 @@ function dir_copy($dir_name, $new_dir) {
   }
   return true;
 }
-foreach ($arrayIncDir as $item) {
-  dir_copy($_SERVER['DOCUMENT_ROOT'].$item, $_SERVER['DOCUMENT_ROOT'] . '/vendor/data/html'.$item);
+if( !preg_match("/(\.css|\.scss|\.sass|\.less|\.js|\.ejs|\.es6|\.es)/", $request_uri) ){
+  foreach ($arrayIncDir as $item) {
+    dir_copy($_SERVER['DOCUMENT_ROOT'].$item, $_SERVER['DOCUMENT_ROOT'] . '/vendor/data/html'.$item);
+  }
 }
 
 // Load our autoloader
@@ -63,7 +67,7 @@ $jsonArray = json_decode($json, true);
 
 $service = array(
   'path' => $json_path,
-  'vendor_data_samplejson' => $jsonArray
+  'json' => $jsonArray
 );
 $twig->addGlobal('service', $service);
 
@@ -78,19 +82,20 @@ $CONFIG = array(
 );
 
 // Set request uri.
-$request_uri = $_SERVER['REQUEST_URI'];
-$request_query = $_SERVER['QUERY_STRING'];
 if( preg_match("/(\.html|\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg)/", $request_uri) ){
-  $request_uri_fix = $request_uri;
+  // Remove Parameter.
+  $request_uri_fix = preg_replace("/(\?.*$)/", '', $request_uri);
 } else {
   $request_uri_fix = preg_replace("/(.*)\/.*$/", '$1/'.$CONFIG['default_file'], $request_uri);
 }
 
+// Not file.
 if(!file_exists($_SERVER['DOCUMENT_ROOT'].$request_uri_fix)){
   header('HTTP/1.0 404 Not Found');
   exit;
 }
 
+// Render file.
 if( !preg_match("/(\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg)/", $request_uri) ){
   // Render our view.
   $document = $twig->render($request_uri_fix, ['app' => $app] );
@@ -99,12 +104,10 @@ if( !preg_match("/(\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|
   // Render our file.
   $mine_type = get_minetype($request_uri_fix);
   header("Content-type: ".$mine_type."; charset=utf-8");
-  include_once($_SERVER['DOCUMENT_ROOT'].$request_uri_fix);
+  readfile($_SERVER['DOCUMENT_ROOT'].$request_uri_fix);
 }
 
-
 function get_minetype($file){
-
   $filetype = preg_replace("/.*\/.*\.(.*)$/", '$1', $file);
 
   $minetype_data = array(
@@ -164,5 +167,4 @@ function get_minetype($file){
       break;
     }
   }
-
 }
