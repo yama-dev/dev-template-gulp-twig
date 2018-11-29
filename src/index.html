@@ -1,5 +1,5 @@
 {#
-  DEV TEMPLATE GULP(Twig) v0.1.2
+  DEV TEMPLATE GULP(Twig) v0.2.5
   https://github.com/yama-dev/dev-template-gulp-twig
   Copyright yama-dev
   Licensed under the MIT license.
@@ -17,7 +17,7 @@
     <h1>SECTION TITLE</h1>
     <ul>
 {# データ取得 #}
-{% set data = service.vendor_data_samplejson %}
+{% set data = service.json %}
       {% for news in data.items %}
       <li id="{{ news.id }}">
         <hr>

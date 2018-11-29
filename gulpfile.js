@@ -17,9 +17,7 @@ argv.forEach((item,i)=>{
  */
 const CONFIG_PATH = {
   src     : 'src/',
-  release : 'release/',
-  cms     : 'cms/',
-  php     : 'php/'
+  release : 'release/'
 };
 const CONFIG = {
   outputDirectory: {
@@ -41,12 +39,18 @@ const CONFIG = {
   },
   watchIgnoreDirectory: {
     html : [
-      '!' + CONFIG_PATH.src + '**/vender/*.html',
+      '!' + CONFIG_PATH.src + '**/vender/**/*.html',
+      '!' + CONFIG_PATH.src + '**/vendor/**/*.html',
+      '!' + CONFIG_PATH.src + '**/inc/**/*.html',
+      '!' + CONFIG_PATH.src + '**/include/**/*.html',
+      '!' + CONFIG_PATH.src + '**/ssi/**/*.html',
       '!' + CONFIG_PATH.src + '_**/*.html'
     ],
     js : [
-      '!' + CONFIG_PATH.src + '**/vender/*.js',
-      '!' + CONFIG_PATH.src + '**/libs/*.js'
+      '!' + CONFIG_PATH.src + '**/vender/**/*.js',
+      '!' + CONFIG_PATH.src + '**/vendor/**/*.js',
+      '!' + CONFIG_PATH.src + '**/lib/**/*.js',
+      '!' + CONFIG_PATH.src + '**/libs/**/*.js'
     ]
   }
 };
@@ -69,6 +73,7 @@ const babel          = require('gulp-babel');
 const eslint         = require('gulp-eslint');
 const htmlhint       = require('gulp-htmlhint');
 const cache          = require('gulp-cached');
+const progeny        = require('gulp-progeny');
 const plumber        = require('gulp-plumber');
 const ignore         = require('gulp-ignore');
 const notifier       = require('node-notifier');
@@ -85,6 +90,7 @@ const runSequence    = require('run-sequence');
 gulp.task('sass', ()=>{
   return gulp.src(CONFIG.sourceDirectory.sass)
     .pipe(cache('sass'))
+    .pipe(progeny())
     .pipe(plumber({
       errorHandler(error) {
         notifier.notify({
@@ -111,7 +117,11 @@ gulp.task('htmllint', ()=>{
   return gulp.src([
     CONFIG.watchDirectory.html,
     CONFIG.watchIgnoreDirectory.html[0],
-    CONFIG.watchIgnoreDirectory.html[1]
+    CONFIG.watchIgnoreDirectory.html[1],
+    CONFIG.watchIgnoreDirectory.html[2],
+    CONFIG.watchIgnoreDirectory.html[3],
+    CONFIG.watchIgnoreDirectory.html[4],
+    CONFIG.watchIgnoreDirectory.html[5]
   ])
     .pipe(plumber({
       errorHandler(error) {
@@ -172,7 +182,9 @@ gulp.task('js', ()=>{
   return gulp.src([
     CONFIG.sourceDirectory.js,
     CONFIG.watchIgnoreDirectory.js[0],
-    CONFIG.watchIgnoreDirectory.js[1]
+    CONFIG.watchIgnoreDirectory.js[1],
+    CONFIG.watchIgnoreDirectory.js[2],
+    CONFIG.watchIgnoreDirectory.js[3]
   ])
     .pipe(plumber({
       errorHandler(error) {

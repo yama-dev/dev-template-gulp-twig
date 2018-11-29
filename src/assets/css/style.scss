@@ -20,8 +20,43 @@
 // Debug
 // @debug "style.scss";
 
+// 3device (PC、Tablet、Smartphone)
+@media screen and (max-width: 980px) {
+}
+@media screen and (max-width: 650px) {
+}
+@media screen and (max-width: 480px) {
+}
+
+// Tablet displays PC layout
+@media screen and (max-width: 767px) {
+}
+
+// Tablet displays Smartphone layout
+@media screen and (max-width: 768px) {
+}
+
+// In case of portrait display
+@media screen and (orientation: portrait) {
+}
+// In case of landscape display
+@media screen and (orientation: landscape) {
+}
+
+$break-point-PC: 768;
+@mixin pc {
+  @media screen and (min-width: #{$break-point-PC}px) {
+    @content
+  }
+}
+@mixin sp {
+  @media screen and (max-width: #{$break-point-PC - 1}px) {
+    @content
+  }
+}
+
 // Style Switching Elements
-@media screen and (min-width: 768px) {
+@include pc(){
   .is-pc {
     display: block;
   }
@@ -35,7 +70,7 @@
     display: none;
   }
 }
-@media screen and (max-width: 767px) {
+@include sp(){
   .is-pc {
     display: none;
   }
@@ -62,29 +97,7 @@ img {
 // @import "./modules/layout";
 // @import "./modules/hover";
 // @import "./modules/button";
-
-// 3device (PC、Tablet、Smartphone)
-@media screen and (max-width: 980px) {
-}
-@media screen and (max-width: 650px) {
-}
-@media screen and (max-width: 480px) {
-}
-
-// Tablet displays PC layout
-@media screen and (max-width: 767px) {
-}
-
-// Tablet displays Smartphone layout
-@media screen and (max-width: 768px) {
-}
-
-// In case of portrait display
-@media screen and (orientation: portrait) {
-}
-// In case of landscape display
-@media screen and (orientation: landscape) {
-}
+// @import "./modules/utility";
 
 // One Click CSS
 // -> https://css.miugle.info/
