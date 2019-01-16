@@ -32,7 +32,7 @@ function dir_copy($dir_name, $new_dir) {
         if (is_dir($dir_name . "/" . $file)) {
           dir_copy($dir_name . "/" . $file, $new_dir . "/" . $file);
         } else {
-          if(time() - 10 >= filemtime($new_dir . "/" . $file)){
+          if(time() - 10 >= @filemtime($new_dir . "/" . $file)){
             copy($dir_name . "/" . $file, $new_dir . "/" . $file);
           }
         }
