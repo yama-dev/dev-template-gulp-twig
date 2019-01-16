@@ -1,4 +1,10 @@
-'use strict';
+/*!
+ * DEV TEMPLATE GULP (Twig)
+ * Version 0.3.5
+ * Repository https://github.com/yama-dev/dev-template-gulp
+ * Copyright yama-dev
+ * Licensed under the MIT license.
+ */
 
 const pkg = require('./package.json');
 console.log('-'.repeat(38) + '\n'+pkg.name + ' version:' + pkg.version + '\n'+'-'.repeat(38));
@@ -8,8 +14,15 @@ console.log('-'.repeat(38) + '\n'+pkg.name + ' version:' + pkg.version + '\n'+'-
  */
 const argv = process.argv.slice(2);
 let param = new Object();
-argv.forEach((item,i)=>{
-  if(i % 2 === 0 && /--/.test(item) && !/--/.test(argv[i+1])) param[item] = argv[i+1];
+argv.map((item,i)=>{
+  if(/--/.test(item)){
+    if(argv[i+1]){
+      if(!/--/.test(argv[i+1])) param[item] = argv[i+1];
+      else param[item] = true;
+    } else {
+      param[item] = true;
+    }
+  }
 });
 
 /**
@@ -17,7 +30,9 @@ argv.forEach((item,i)=>{
  */
 const CONFIG_PATH = {
   src     : 'src/',
-  release : 'release/'
+  release : 'release/',
+  build   : 'build/',
+  dist    : 'dist/'
 };
 const CONFIG = {
   outputDirectory: {
@@ -52,21 +67,24 @@ const CONFIG = {
       '!' + CONFIG_PATH.src + '**/lib/**/*.js',
       '!' + CONFIG_PATH.src + '**/libs/**/*.js'
     ]
-  }
+  },
+  deployDirectory: [
+    CONFIG_PATH.src + '**/*',
+    '!' + CONFIG_PATH.src + '_*/**',
+    '!' + CONFIG_PATH.src + 'vender/**',
+    '!' + CONFIG_PATH.src + 'vendor/**',
+    '!' + CONFIG_PATH.src + '**/_*.css',
+    '!' + CONFIG_PATH.src + '**/*.scss',
+    '!' + CONFIG_PATH.src + '**/*.es6'
+  ]
 };
-const SASS_AUTOPREFIXER_BROWSERS = [
-  'ie >= 10',
-  'ios >= 8',
-  'android >= 4.4',
-  'last 2 versions'
-];
-const SASS_OUTPUT_STYLE = 'expanded'; //nested, compact, compressed, expanded.
 
 /**
  * IMPORT MODULES
  */
 const gulp           = require('gulp');
 const sass           = require('gulp-sass');
+sass.compiler        = require('node-sass');
 const postcss        = require('gulp-postcss');
 const csscomb        = require('gulp-csscomb');
 const babel          = require('gulp-babel');
@@ -76,18 +94,42 @@ const cache          = require('gulp-cached');
 const progeny        = require('gulp-progeny');
 const plumber        = require('gulp-plumber');
 const ignore         = require('gulp-ignore');
+const uglify         = require('gulp-uglify');
 const notifier       = require('node-notifier');
 const pixrem         = require('pixrem');
 const postcssOpacity = require('postcss-opacity');
 const autoprefixer   = require('autoprefixer');
 const cssMqpacker    = require('css-mqpacker');
+const cssnano        = require('cssnano');
 const browserSync    = require('browser-sync').create();
 const runSequence    = require('run-sequence');
+runSequence.options.ignoreUndefinedTasks = true;
 
 /**
  * Sass Task
  */
 gulp.task('sass', ()=>{
+
+  const SASS_CONFIG = {
+    outputStyle: 'expanded', //nested, compact, compressed, expanded.
+    indentType: 'space',
+    indentWidth: 2,
+    precision: 3
+  };
+  const SASS_AUTOPREFIXER_BROWSERS = [
+    'ie >= 10',
+    'ios >= 9',
+    'android >= 4.4',
+    'last 2 versions'
+  ];
+  let POSTCSS_PLUGINS = [
+    autoprefixer({browsers: SASS_AUTOPREFIXER_BROWSERS}),
+    cssMqpacker(),
+    pixrem(),
+    postcssOpacity()
+  ];
+  if(param['--cssmin']) POSTCSS_PLUGINS.push( cssnano({autoprefixer: false}) );
+
   return gulp.src(CONFIG.sourceDirectory.sass)
     .pipe(cache('sass'))
     .pipe(progeny({
@@ -99,20 +141,12 @@ gulp.task('sass', ()=>{
     }))
     .pipe(plumber({
       errorHandler(error) {
-        notifier.notify({
-          title: 'Sass コンパイル エラー',
-          message: error.message
-        });
+        notifier.notify({ title: 'Sass コンパイル エラー', message: error.message });
       }
     }))
-    .pipe(sass({outputStyle: SASS_OUTPUT_STYLE}).on('error', sass.logError))
+    .pipe(sass(SASS_CONFIG).on('error', sass.logError))
     .pipe(csscomb())
-    .pipe(postcss([
-      autoprefixer({browsers: SASS_AUTOPREFIXER_BROWSERS}),
-      cssMqpacker(),
-      pixrem(),
-      postcssOpacity()
-    ]))
+    .pipe(postcss(POSTCSS_PLUGINS))
     .pipe(gulp.dest(CONFIG.outputDirectory.dev));
 });
 
@@ -120,47 +154,42 @@ gulp.task('sass', ()=>{
  * HtmlLint Task
  */
 gulp.task('htmllint', ()=>{
-  return gulp.src([
-    CONFIG.watchDirectory.html,
-    CONFIG.watchIgnoreDirectory.html[0],
-    CONFIG.watchIgnoreDirectory.html[1],
-    CONFIG.watchIgnoreDirectory.html[2],
-    CONFIG.watchIgnoreDirectory.html[3],
-    CONFIG.watchIgnoreDirectory.html[4],
-    CONFIG.watchIgnoreDirectory.html[5]
-  ])
+
+  const HTMLLINT_CONFIG = {
+    'tagname-lowercase': true,
+    'attr-lowercase': true,
+    'attr-value-double-quotes': true,
+    'attr-value-not-empty': false,
+    'attr-no-duplication': true,
+    'doctype-first': false,
+    'tag-pair': true,
+    'tag-self-close': false,
+    'spec-char-escape': true,
+    'id-unique': true,
+    'src-not-empty': true,
+    'alt-require': true,
+    'head-script-disabled': false,
+    'img-alt-require': true,
+    'doctype-html5': true,
+    'id-class-value': 'false',
+    'style-disabled': false,
+    'space-tab-mixed-disabled': true,
+    'id-class-ad-disabled': true,
+    'href-abs-or-rel': false,
+    'attr-unsafe-chars': true
+  };
+
+  let _target = CONFIG.watchIgnoreDirectory.html.slice();
+  _target.unshift(CONFIG.watchDirectory.html);
+
+  return gulp.src(_target)
     .pipe(plumber({
       errorHandler(error) {
-        notifier.notify({
-          title: 'HTML LINT エラー',
-          message: error.message
-        });
+        notifier.notify({ title: 'HTML LINT エラー', message: error.message });
         this.emit('end');
       }
     }))
-    .pipe(htmlhint({
-      'tagname-lowercase': true,
-      'attr-lowercase': true,
-      'attr-value-double-quotes': true,
-      'attr-value-not-empty': false,
-      'attr-no-duplication': true,
-      'doctype-first': false,
-      'tag-pair': true,
-      'tag-self-close': false,
-      'spec-char-escape': true,
-      'id-unique': true,
-      'src-not-empty': true,
-      'alt-require': true,
-      'head-script-disabled': false,
-      'img-alt-require': true,
-      'doctype-html5': true,
-      'id-class-value': 'false',
-      'style-disabled': false,
-      'space-tab-mixed-disabled': true,
-      'id-class-ad-disabled': true,
-      'href-abs-or-rel': false,
-      'attr-unsafe-chars': true
-    }))
+    .pipe(htmlhint(HTMLLINT_CONFIG))
     .pipe(htmlhint.reporter());
 });
 
@@ -168,13 +197,13 @@ gulp.task('htmllint', ()=>{
  * Js Task
  */
 gulp.task('js_babel', ()=>{
-  return gulp.src([ CONFIG.sourceDirectory.es6 ])
+  let _target = CONFIG.watchIgnoreDirectory.js.slice();
+  _target.unshift(CONFIG.sourceDirectory.es6);
+
+  return gulp.src(_target)
     .pipe(plumber({
       errorHandler(error){
-        notifier.notify({
-          title: 'BABEL コンパイル エラー',
-          message: error.message
-        });
+        notifier.notify({ title: 'BABEL コンパイル エラー', message: error.message });
       }
     }))
     .pipe(babel())
@@ -184,26 +213,31 @@ gulp.task('js_babel', ()=>{
 /**
  * Js Task
  */
-gulp.task('js', ()=>{
-  return gulp.src([
-    CONFIG.sourceDirectory.js,
-    CONFIG.watchIgnoreDirectory.js[0],
-    CONFIG.watchIgnoreDirectory.js[1],
-    CONFIG.watchIgnoreDirectory.js[2],
-    CONFIG.watchIgnoreDirectory.js[3]
-  ])
+gulp.task('js_lint', ()=>{
+  let _target = CONFIG.watchIgnoreDirectory.js.slice();
+  _target.unshift(CONFIG.sourceDirectory.js);
+
+  return gulp.src(_target)
     .pipe(plumber({
       errorHandler(error) {
-        notifier.notify({
-          title: 'Js エラー',
-          message: error.message
-        });
+        notifier.notify({ title: 'LINT エラー', message: error.message });
         this.emit('end');
       }
     }))
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
+});
+
+/**
+ * Minify Task */
+gulp.task('js_min', ()=>{
+  let _target = CONFIG.watchIgnoreDirectory.js.slice();
+  _target.unshift(CONFIG.sourceDirectory.js);
+
+  return gulp.src(_target)
+    .pipe(uglify({ output: { ascii_only: true } }))
+    .pipe(gulp.dest(CONFIG.outputDirectory.dev));
 });
 
 /**
@@ -215,13 +249,9 @@ gulp.task('watch',['server'], ()=>{
   gulp.watch(CONFIG.watchDirectory.sass,['sass']);
   gulp.watch(CONFIG.watchDirectory.es6,['js_babel']);
   gulp.watch(CONFIG.watchDirectory.html,['htmllint']);
-  gulp.watch(CONFIG.watchDirectory.js,['js']);
+  gulp.watch(CONFIG.watchDirectory.js,['js_lint']);
 
-  notifier.notify({
-    title: 'Start Gulp',
-    message: new Date(),
-    sound: 'Glass'
-  });
+  notifier.notify({ title: 'Start Gulp', message: new Date(), sound: 'Glass' });
 
 });
 
@@ -257,20 +287,11 @@ gulp.task('server', ()=>{
  * Deploy Task
  */
 gulp.task('deploy', ()=>{
-  notifier.notify({
-    title: 'Deploy',
-    message: new Date(),
-    sound: 'Glass'
-  });
-  return gulp.src([
-    CONFIG.outputDirectory.dev+'**/*',
-    '!'+CONFIG.outputDirectory.dev+'_*/**',
-    '!'+CONFIG.outputDirectory.dev+'_twig.module.php',
-    '!'+CONFIG.outputDirectory.dev+'vendor/**',
-    '!'+CONFIG.outputDirectory.dev+'**/_*.css',
-    '!'+CONFIG.outputDirectory.dev+'**/*.scss',
-    '!'+CONFIG.outputDirectory.dev+'**/*.es6'
-  ])
+  notifier.notify({ title: 'Deploy', message: new Date(), sound: 'Glass' });
+
+  let _target = CONFIG.deployDirectory.slice();
+
+  return gulp.src(_target)
     .pipe(ignore.include({isFile: true}))
     .pipe(gulp.dest(CONFIG.outputDirectory.release));
 });
@@ -279,12 +300,15 @@ gulp.task('deploy', ()=>{
  * Default Task
  */
 gulp.task('default', (callback)=>{
-  return runSequence(['js_babel','sass'],['htmllint','js'],'watch',callback);
+  return runSequence(['js_babel','sass'],['htmllint','js_lint'],'watch',callback);
 });
 
 /**
  * Release Task
  */
+let releaseTaskAdd = [];
+if(param['--jsmin']) releaseTaskAdd.push('js_min');
+if(!releaseTaskAdd.length) releaseTaskAdd = null;
 gulp.task('release', (callback)=>{
-  return runSequence(['js_babel','sass'],['htmllint','js'],'deploy',callback);
+  return runSequence(['js_babel','sass'],['htmllint','js_lint'],releaseTaskAdd,'deploy',callback);
 });
