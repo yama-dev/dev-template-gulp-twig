@@ -112,6 +112,7 @@ function get_minetype($file){
 
   $minetype_data = array(
     'txt' => 'text/plain',
+    'log' => 'text/plain',
     'htm' => 'text/html',
     'html' => 'text/html',
     'php' => 'text/html',
