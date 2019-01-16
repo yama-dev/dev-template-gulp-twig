@@ -1,4 +1,4 @@
-@charset "utf-8";
+// -> site.default.scss
 
 // Set Reset-Css
 
@@ -20,29 +20,17 @@
 // Debug
 // @debug "style.scss";
 
-// 3device (PC、Tablet、Smartphone)
-@media screen and (max-width: 980px) {
-}
-@media screen and (max-width: 650px) {
-}
-@media screen and (max-width: 480px) {
-}
-
-// Tablet displays PC layout
+// MediaQuery.
 @media screen and (max-width: 767px) {
 }
-
-// Tablet displays Smartphone layout
-@media screen and (max-width: 768px) {
-}
-
-// In case of portrait display
+// Portrait.
 @media screen and (orientation: portrait) {
 }
-// In case of landscape display
+// Landscape.
 @media screen and (orientation: landscape) {
 }
 
+// Mixis.
 $break-point-PC: 768;
 @mixin pc {
   @media screen and (min-width: #{$break-point-PC}px) {
@@ -54,35 +42,31 @@ $break-point-PC: 768;
     @content
   }
 }
+// Portrait.
+@mixin port {
+  @media screen and (orientation: portrait) {
+    @content
+  }
+}
+// Landscape.
+@mixin land {
+  @media screen and (orientation: landscape) {
+    @content
+  }
+}
 
 // Style Switching Elements
 @include pc(){
-  .is-pc {
-    display: block;
-  }
-  .is-sp {
-    display: none;
-  }
-  .is-pc-inline {
-    display: inline-block;
-  }
-  .is-sp-inline {
-    display: none;
-  }
+  .is-pc { display: block; }
+  .is-sp { display: none; }
+  .is-pc-inline { display: inline-block; }
+  .is-sp-inline { display: none; }
 }
 @include sp(){
-  .is-pc {
-    display: none;
-  }
-  .is-sp {
-    display: block;
-  }
-  .is-pc-inline {
-    display: none;
-  }
-  .is-sp-inline {
-    display: inline-block;
-  }
+  .is-pc { display: none; }
+  .is-sp { display: block; }
+  .is-pc-inline { display: none; }
+  .is-sp-inline { display: inline-block; }
 }
 
 // Style Image Fit
@@ -94,17 +78,28 @@ img {
 
 // Import Modules.
 // @import "./modules/settings";
+// @import "./modules/mediaquery";
 // @import "./modules/layout";
 // @import "./modules/hover";
 // @import "./modules/button";
 // @import "./modules/utility";
 
-// One Click CSS
+// One Click CSS.
 // -> https://css.miugle.info/
 
-// CSS validation
+// CSS validation.
 // -> https://jigsaw.w3.org/css-validator/validator.html.ja
 
-// Style Sheet
-// -> style.scss
+// CSS Design.
+// BEM    -> https://en.bem.info/
+// FLOCSS -> https://github.com/hiloki/flocss
+
+// js- | javascript 対象要素   | id="js-modal-btn"
+// l-  | Layoutレイヤー要素    | class="l-header"
+// c-  | Componentレイヤー要素 | class="c-btn"
+// p-  | Projectレイヤー要素   | class="p-btn--primary"
+// u-  | Utilityレイヤー要素   | class="u-hover"
+// t-  | 状態(比較的広い範囲)  | class="t-blue"
+// is- | 状態(比較的狭い範囲)  | class="is-active"
+// m-  | modal要素             | class="m-default"
 
