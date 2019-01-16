@@ -62,12 +62,17 @@ $twig = new Twig_Environment($loader, array(
 $twig->addGlobal('env', 'develop');
 
 $json_path = $_SERVER['DOCUMENT_ROOT'] . JSON_PATH;
-$json = file_get_contents($json_path);
-$jsonArray = json_decode($json, true);
+if(file_exists($json_path)){
+  $_json = file_get_contents($json_path);
+  $jsonArray = json_decode($_json, true);
+} else {
+  $jsonArray = array('statu'=>'no json');
+}
 
 $service = array(
   'path' => $json_path,
-  'json' => $jsonArray
+  'json' => $jsonArray,
+  'call' => $jsonArray
 );
 $twig->addGlobal('service', $service);
 
