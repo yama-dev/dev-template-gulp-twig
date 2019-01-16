@@ -3,19 +3,9 @@
 $request_uri = $_SERVER['REQUEST_URI'];
 $request_query = $_SERVER['QUERY_STRING'];
 
-define('JSON_PATH', '/vendor/data/json/dummy.json');
+// error_log($request_uri."\n",3,"../log.html");
 
-// Set include dir.
-$arrayIncDir = array(
-  '/assets/inc',
-  '/assets/_inc',
-  '/assets/include',
-  '/assets/_include',
-  '/inc',
-  '/_inc',
-  '/include',
-  '/_include'
-);
+define('JSON_PATH', '/vendor/data/json/dummy.json');
 
 // Copy include files.
 function dir_copy($dir_name, $new_dir) {
@@ -42,9 +32,36 @@ function dir_copy($dir_name, $new_dir) {
   }
   return true;
 }
-if( !preg_match("/(\.css|\.scss|\.sass|\.less|\.js|\.ejs|\.es6|\.es)/", $request_uri) ){
-  foreach ($arrayIncDir as $item) {
-    dir_copy($_SERVER['DOCUMENT_ROOT'].$item, $_SERVER['DOCUMENT_ROOT'] . '/vendor/data/html'.$item);
+
+function getFileList($dir) {
+  $files = array_filter(glob(rtrim($dir, '/') . '/*'), function($v) {
+    if(strpos($v, 'vendor')){
+      return false;
+    } elseif(strpos($v, 'inc')){
+      return $v;
+    } elseif(strpos($v, 'assets')){
+      return $v;
+    } else {
+      return false;
+    }
+  });
+  $list = array();
+  foreach ($files as $file) {
+    if (is_file($file)) {
+      $list[] = $file;
+    }
+    if (is_dir($file)) {
+      $list = array_merge($list, getFileList($file));
+    }
+  }
+  return $list;
+}
+$filelists = getFileList($_SERVER['DOCUMENT_ROOT']);
+foreach ($filelists as $item) {
+  $itemPre = str_replace($_SERVER['DOCUMENT_ROOT'], '', $item);
+  $itemFix = pathinfo($itemPre,PATHINFO_DIRNAME);
+  if(strlen($itemFix)>3){
+    dir_copy($_SERVER['DOCUMENT_ROOT'].$itemFix, $_SERVER['DOCUMENT_ROOT'] . '/vendor/data/html'.$itemFix);
   }
 }
 
