@@ -1,4 +1,4 @@
-# DEV TEMPLATE GULP(Twig)
+# DEV TEMPLATE GULP (Twig)
 
 [![Build Status](https://travis-ci.org/yama-dev/dev-template-gulp-twig.svg?branch=master)](https://travis-ci.org/yama-dev/dev-template-gulp-twig)
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/yama-dev/dev-template-gulp-twig/blob/master/LICENSE)
@@ -42,7 +42,7 @@ __3. Gulp インストール__
 ### 1. dev-template-gulp をダウンロードして、作業フォルダに配置  
 
 __ダウンロード__  
--> https://github.com/yama-dev/dev-template-gulp/releases/latest  
+-> https://github.com/yama-dev/dev-template-gulp-twig/releases/latest  
 
 ### 2. npmで関連モジュールをインストール  
 

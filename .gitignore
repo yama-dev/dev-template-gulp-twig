@@ -18,5 +18,6 @@ package-lock.json
 # Development environment.
 _*/
 .tern-port
+
 src/vendor/data/html/*
 src/vendor/data/json/_*.json
