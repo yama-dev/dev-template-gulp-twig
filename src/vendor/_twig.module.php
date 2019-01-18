@@ -1,4 +1,11 @@
 <?php
+/*!
+ * DEV TEMPLATE GULP (Twig)
+ * Version 0.3.6
+ * Repository https://github.com/yama-dev/dev-template-gulp
+ * Copyright yama-dev
+ * Licensed under the MIT license.
+ */
 
 $request_uri = $_SERVER['REQUEST_URI'];
 $request_query = $_SERVER['QUERY_STRING'];
