@@ -1,4 +1,11 @@
 <?php
+/*!
+ * DEV TEMPLATE GULP (Twig)
+ * Version 0.3.6
+ * Repository https://github.com/yama-dev/dev-template-gulp
+ * Copyright yama-dev
+ * Licensed under the MIT license.
+ */
 
 $request_uri = $_SERVER['REQUEST_URI'];
 $request_query = $_SERVER['QUERY_STRING'];
@@ -37,9 +44,7 @@ function getFileList($dir) {
   $files = array_filter(glob(rtrim($dir, '/') . '/*'), function($v) {
     if(strpos($v, 'vendor')){
       return false;
-    } elseif(strpos($v, 'inc')){
-      return $v;
-    } elseif(strpos($v, 'assets')){
+    } elseif(strpos($v, 'inc') || strpos($v, 'assets')){
       return $v;
     } else {
       return false;
@@ -47,7 +52,7 @@ function getFileList($dir) {
   });
   $list = array();
   foreach ($files as $file) {
-    if (is_file($file)) {
+    if (is_file($file) && preg_match('/(\.html|\.htm|\.ssi)/', $file) ) {
       $list[] = $file;
     }
     if (is_dir($file)) {
