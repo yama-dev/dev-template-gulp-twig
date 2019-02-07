@@ -7,8 +7,9 @@
  * Licensed under the MIT license.
  */
 
-$request_uri = $_SERVER['REQUEST_URI'];
-$request_query = $_SERVER['QUERY_STRING'];
+$request_uri       = $_SERVER['REQUEST_URI'];
+$request_query     = $_SERVER['QUERY_STRING'];
+$request_extension = "/(\.html|\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg|\.mp4|\.mp)/";
 
 // error_log($request_uri."\n",3,"../log.html");
 
@@ -109,7 +110,7 @@ $CONFIG = array(
 );
 
 // Set request uri.
-if( preg_match("/(\.html|\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg)/", $request_uri) ){
+if( preg_match($request_extension, $request_uri) ){
   // Remove Parameter.
   $request_uri_fix = preg_replace("/(\?.*$)/", '', $request_uri);
 } else {
@@ -123,7 +124,7 @@ if(!file_exists($_SERVER['DOCUMENT_ROOT'].$request_uri_fix)){
 }
 
 // Render file.
-if( !preg_match("/(\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg)/", $request_uri) ){
+if( !preg_match($request_extension, $request_uri) ){
   // Render our view.
   $document = $twig->render($request_uri_fix, ['app' => $app] );
   echo $document;
