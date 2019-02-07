@@ -1,8 +1,8 @@
 <?php
 /*!
  * DEV TEMPLATE GULP (Twig)
- * Version 0.3.6
- * Repository https://github.com/yama-dev/dev-template-gulp
+ * Version 0.3.7
+ * Repository https://github.com/yama-dev/dev-template-gulp-twig
  * Copyright yama-dev
  * Licensed under the MIT license.
  */
