@@ -1,14 +1,18 @@
 # DEV TEMPLATE GULP (Twig)
 
 [![Build Status](https://travis-ci.org/yama-dev/dev-template-gulp-twig.svg?branch=master)](https://travis-ci.org/yama-dev/dev-template-gulp-twig)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/yama-dev/dev-template-gulp-twig/blob/master/LICENSE)
+[![](https://img.shields.io/github/repo-size/yama-dev/dev-template-gulp-twig.svg)](https://github.com/yama-dev/dev-template-gulp-twig/releases/latest)
+![](https://img.shields.io/github/release/yama-dev/dev-template-gulp-twig.svg)
+![](https://img.shields.io/david/yama-dev/dev-template-gulp-twig.svg)
+![](https://img.shields.io/david/dev/yama-dev/dev-template-gulp-twig.svg)
+[![GitHub](https://img.shields.io/github/license/yama-dev/dev-template-gulp-twig.svg)](https://github.com/yama-dev/dev-template-gulp-twig/blob/master/LICENSE)
 
 <br>
 
 ## 概要
 
 webサイト制作用の開発環境になります。  
-※[@gulp](https://github.com/gulpjs/gulp)の利用を前提に作成してありますが、そのままでも利用可能です。  
+※[@gulp](https://github.com/gulpjs/gulp)の利用を前提に作成してありますが、staticファイルをそのままでも利用可能です。  
   
  - 可能な限りミニマムな構成としています。
  - 初期のHTML,Sass,javascriptファイルが同梱されています。
@@ -18,65 +22,43 @@ webサイト制作用の開発環境になります。
 ## 利用環境の構築
 
 __1. Git インストール__
-
-インストールしていない場合は下記参照
-
 [インストール方法](./docs/install.md)
 
 __2. Nodejs インストール__
-
-インストールしていない場合は下記参照
-
 [インストール方法](./docs/install.md)
 
 __3. Gulp インストール__
-
-インストールしていない場合は下記参照
-
 [インストール方法](./docs/install.md)
 
 <br>
 
 ## 使い方
 
-### 1. dev-template-gulp をダウンロードして、作業フォルダに配置  
+### 1. dev-template-gulp-twig をダウンロードして、作業フォルダに配置  
 
 __ダウンロード__  
--> https://github.com/yama-dev/dev-template-gulp-twig/releases/latest  
+-> https://github.com/yama-dev/dev-template-gulp-twig/releases  
 
-### 2. npmで関連モジュールをインストール  
+### 2. npmから起動  
 
-ターミナルで以下のコマンドを入力  
-
-※作業ディレクトリに移動してから以下のコマンドを実行  
-※`package.json` に記述されたモジュールがインストールされる。  
+**ターミナルで以下のコマンドを入力**  
 ``` bash
 npm install
+npm run php
 ```
+※作業ディレクトリに移動してから以下のコマンドを実行  
+※`package.json` に記述されたモジュールがインストールされる。  
+※gulpコマンドを個別に実行する場合は「Gulpのタスク一覧」を参照  
+※正常に起動すると`localhost:3000`がブラウザに表示されます。  
 
-### 3. Gulpを起動
-
-ターミナルで以下のコマンドを入力  
-※コマンド一覧は「Gulpのタスク一覧」を参照  
-
-``` bash
-gulp
-```
-
-正常に起動すると「localhost:3000」がブラウザに表示されます。
-
-コーディングを行ってください。
-
-### 4. 納品ファイルを生成
+### 3. 納品ファイルを生成
 
 ターミナルで以下のコマンドを入力
-
-※ *.sass拡張子のファイル、*.es6拡張子のファイル、_(アンダーバー)から始まるファイル  
-　を除くファイルが「release」フォルダにコピーされます。
-
 ``` bash
 gulp release
 ```
+※ *.sass拡張子のファイル、*.es6拡張子のファイル、_(アンダーバー)から始まるファイル  
+　を除くファイルが「release」フォルダにコピーされます。  
 
 <br>
 
@@ -92,30 +74,8 @@ gulp release
 | `gulp js`            | javascriptファイルの構文チェック |                                                                                                                                          | 
 | `gulp release`       | ファイルのリリース               | 公開ファイルのみを`/release/`ディレクトリにまとめる。                                                                                    |
 | `gulp --proxy [url]` | プロキシサーバーを立ち上げ       |                                                                                                                                          | 
-
-<br>
-
-## 主な仕様
-
-| パッケージ    | 役割                 | 補足                                        | 
-| ---           | ---                  | ---                                         | 
-| gulp          | Gulp本体             | https://www.npmjs.com/package/gulp          | 
-| gulp-htmlhint | HTMLのLINT           | https://www.npmjs.com/package/gulp-htmlhint | 
-| gulp-sass     | Sassのコンパイル     | https://www.npmjs.com/package/gulp-sass     | 
-| gulp-postcss  | css最適化            | https://www.npmjs.com/package/gulp-postcss  | 
-| autoprefixer  | プレフィックスの付与  | https://www.npmjs.com/package/autoprefixer  | 
-| gulp-csscomb  | セレクタの整理       | https://www.npmjs.com/package/gulp-csscomb  | 
-| gulp-babel    | ECMAScriptコンパイル | https://www.npmjs.com/package/gulp-babel    | 
-| gulp-eslint   | javascriptのLINT    | https://www.npmjs.com/package/gulp-eslint   | 
-| gulp-cached   | 差分検出、更新       | https://www.npmjs.com/package/gulp-cached   | 
-| gulp-plumber  | エラー検出、制御     | https://www.npmjs.com/package/gulp-plumber  | 
-| node-notifier | デスクトップ通知     | https://www.npmjs.com/package/node-notifier  | 
-| browser-sync  | ブラウザのリロード   | https://www.npmjs.com/package/browser-sync  | 
-
-#### ファイル構造
-
-``` html
-```
+| `gulp --cssmin`      | Sassファイルの圧縮               |                                                                                                                                          | 
+| `gulp --jsmin`       | javascriptファイルの圧縮         |                                                                                                                                          | 
 
 <br>
 

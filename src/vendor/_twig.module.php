@@ -1,14 +1,16 @@
 <?php
 /*!
  * DEV TEMPLATE GULP (Twig)
- * Version 0.3.7
+ * Version 0.8.1
  * Repository https://github.com/yama-dev/dev-template-gulp-twig
  * Copyright yama-dev
  * Licensed under the MIT license.
  */
 
+date_default_timezone_set('Asia/Tokyo');
+
 $request_uri       = $_SERVER['REQUEST_URI'];
-$request_query     = $_SERVER['QUERY_STRING'];
+$request_query     = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
 $request_extension = "/(\.html|\.php|\.css|\.js|\.pdf|\.xml|\.txt|\.json|\.jpg|\.jpeg|\.png|\.gif|\.svg|\.mp4|\.mp)/";
 
 // error_log($request_uri."\n",3,"../log.html");
@@ -122,9 +124,9 @@ if(!file_exists($_SERVER['DOCUMENT_ROOT'].$request_uri_fix)){
   header('HTTP/1.0 404 Not Found');
   exit;
 }
-
 // Render file.
-if( !preg_match($request_extension, $request_uri) ){
+$request_extension_default = "/(\.html|\.php)/";
+if( preg_match($request_extension_default, $request_uri_fix) ){
   // Render our view.
   $document = $twig->render($request_uri_fix, ['app' => $app] );
   echo $document;
