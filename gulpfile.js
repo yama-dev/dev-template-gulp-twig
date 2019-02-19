@@ -1,7 +1,7 @@
 /*!
- * DEV TEMPLATE GULP (Twig)
- * Version 0.3.7
- * Repository https://github.com/yama-dev/dev-template-gulp
+ * DEV TEMPLATE GULP(Twig)
+ * Version 0.8.1
+ * Repository https://github.com/yama-dev/dev-template-gulp-twig
  * Copyright yama-dev
  * Licensed under the MIT license.
  */
@@ -10,10 +10,130 @@ const pkg = require('./package.json');
 console.log('-'.repeat(38) + '\n'+pkg.name + ' version:' + pkg.version + '\n'+'-'.repeat(38));
 
 /**
- * CLIでの引数を判定
+ * 環境設定
+ */
+let CONFIG_USER = {}, CONFIG_PATH = {}, CONFIG = {};
+
+try {
+  CONFIG_USER = require('./.config.json');
+} catch (e) {
+}
+
+CONFIG_PATH = {
+  source      : 'src/',
+  sourceBuild : '',
+  release     : 'release/'
+};
+
+if(CONFIG_USER.outputDirectory){
+  CONFIG_PATH.sourceBuild = CONFIG_USER.outputDirectory;
+} else {
+  CONFIG_PATH.sourceBuild = CONFIG_PATH.source;
+}
+
+CONFIG = {
+  outputDirectory: {
+    dev     : CONFIG_PATH.sourceBuild,
+    release : CONFIG_PATH.release
+  },
+  sourceDirectory: {
+    ejs     : CONFIG_PATH.source + '**/*.ejs',
+    pug     : CONFIG_PATH.source + '**/*.pug',
+    sass    : CONFIG_PATH.source + '**/*.scss',
+    js      : CONFIG_PATH.source + '**/*.js',
+    es6     : CONFIG_PATH.source + '**/*.es6',
+    es     : CONFIG_PATH.source + '**/*.es'
+  },
+  watchDirectory: {
+    html    : CONFIG_PATH.sourceBuild + '**/*.html',
+    ejs     : CONFIG_PATH.source + '**/*.ejs',
+    pug     : CONFIG_PATH.source + '**/*.pug',
+    php     : CONFIG_PATH.sourceBuild + '**/*.php',
+    css     : CONFIG_PATH.sourceBuild + '**/*.css',
+    sass    : CONFIG_PATH.source + '**/*.scss',
+    js      : CONFIG_PATH.sourceBuild + '**/*.js',
+    es6     : CONFIG_PATH.source + '**/*.es6',
+    es      : CONFIG_PATH.source + '**/*.es'
+  },
+  watchIgnoreDirectory: {
+    html : [
+      '!' + CONFIG_PATH.source + '**/vender/**/*.html',
+      '!' + CONFIG_PATH.source + '**/vendor/**/*.html',
+      '!' + CONFIG_PATH.source + '**/inc/**/*.html',
+      '!' + CONFIG_PATH.source + '**/include/**/*.html',
+      '!' + CONFIG_PATH.source + '**/ssi/**/*.html',
+      '!' + CONFIG_PATH.source + '_**/*.html'
+    ],
+    ejs : [
+      '!' + CONFIG_PATH.source + '**/_*.ejs'
+    ],
+    pug : [
+      '!' + CONFIG_PATH.source + '**/_*.pug'
+    ],
+    js : [
+      '!' + CONFIG_PATH.source + '**/vender/**/*.js',
+      '!' + CONFIG_PATH.source + '**/vendor/**/*.js',
+      '!' + CONFIG_PATH.source + '**/lib/**/*.js',
+      '!' + CONFIG_PATH.source + '**/libs/**/*.js'
+    ]
+  },
+  deployDirectory: [
+    CONFIG_PATH.source + '**/*',
+    '!' + CONFIG_PATH.source + '_*/**',
+    '!' + CONFIG_PATH.source + 'vender/**',
+    '!' + CONFIG_PATH.source + 'vendor/**',
+    '!' + CONFIG_PATH.source + '**/*.ejs',
+    '!' + CONFIG_PATH.source + '**/*.pug',
+    '!' + CONFIG_PATH.source + '**/_*.css',
+    '!' + CONFIG_PATH.source + '**/*.scss',
+    '!' + CONFIG_PATH.source + '**/*.es6',
+    '!' + CONFIG_PATH.source + '**/*.es'
+  ]
+};
+
+/**
+ * IMPORT MODULES
+ */
+const gulp           = require('gulp');
+
+const htmlhint       = require('gulp-htmlhint');
+const htmlmin        = require('gulp-htmlmin');
+const ejs            = require('gulp-ejs');
+const pug            = require('gulp-pug');
+
+const sass           = require('gulp-sass');
+sass.compiler        = require('node-sass');
+const postcss        = require('gulp-postcss');
+const csscomb        = require('gulp-csscomb');
+const pixrem         = require('pixrem');
+const postcssOpacity = require('postcss-opacity');
+const autoprefixer   = require('autoprefixer');
+const cssMqpacker    = require('css-mqpacker');
+const cssnano        = require('cssnano');
+
+const babel          = require('gulp-babel');
+const eslint         = require('gulp-eslint');
+const uglify         = require('gulp-uglify');
+
+const rename         = require('gulp-rename');
+const cache          = require('gulp-cached');
+const progeny        = require('gulp-progeny');
+const plumber        = require('gulp-plumber');
+const ignore         = require('gulp-ignore');
+
+const notifier       = require('node-notifier');
+const browserSync    = require('browser-sync').create();
+const runSequence    = require('run-sequence');
+runSequence.options.ignoreUndefinedTasks = true;
+const streamUtil     = require('@yama-dev/gulp-stream-util');
+
+/**
+ * Set Add Task
  */
 const argv = process.argv.slice(2);
 let param = new Object();
+param['--htmllint'] = true;
+param['--jslint'] = true;
 argv.map((item,i)=>{
   if(/--/.test(item)){
     if(argv[i+1]){
@@ -24,111 +144,94 @@ argv.map((item,i)=>{
     }
   }
 });
+let taskListAdd = [];
+if(param['--htmlmin'] && param['--htmlmin'] != 'false' && param['--htmlmin'] != 'null') taskListAdd.push('html_min');
+if(param['--htmllint'] && param['--htmllint'] != 'false' && param['--htmllint'] != 'null') taskListAdd.push('html_lint');
+if(param['--jsmin'] && param['--jsmin'] != 'false' && param['--jsmin'] != 'null') taskListAdd.push('js_min');
+if(param['--jslint'] && param['--jslint'] != 'false' && param['--jslint'] != 'null') taskListAdd.push('js_lint');
+if(CONFIG_USER.outputDirectory) taskListAdd.push('copy');
 
 /**
- * 環境設定
+ * Ejs Task
  */
-const CONFIG_PATH = {
-  src     : 'src/',
-  release : 'release/',
-  build   : 'build/',
-  dist    : 'dist/'
-};
-const CONFIG = {
-  outputDirectory: {
-    dev     : CONFIG_PATH.src,
-    release : CONFIG_PATH.release
-  },
-  sourceDirectory: {
-    sass    : CONFIG_PATH.src + '**/*.scss',
-    js      : CONFIG_PATH.src + '**/*.js',
-    es6     : CONFIG_PATH.src + '**/*.es6'
-  },
-  watchDirectory: {
-    html    : CONFIG_PATH.src + '**/*.html',
-    php     : CONFIG_PATH.src + '**/*.php',
-    css     : CONFIG_PATH.src + '**/*.css',
-    sass    : CONFIG_PATH.src + '**/*.scss',
-    js      : CONFIG_PATH.src + '**/*.js',
-    es6     : CONFIG_PATH.src + '**/*.es6'
-  },
-  watchIgnoreDirectory: {
-    html : [
-      '!' + CONFIG_PATH.src + '**/vender/**/*.html',
-      '!' + CONFIG_PATH.src + '**/vendor/**/*.html',
-      '!' + CONFIG_PATH.src + '**/inc/**/*.html',
-      '!' + CONFIG_PATH.src + '**/include/**/*.html',
-      '!' + CONFIG_PATH.src + '**/ssi/**/*.html',
-      '!' + CONFIG_PATH.src + '_**/*.html'
-    ],
-    js : [
-      '!' + CONFIG_PATH.src + '**/vender/**/*.js',
-      '!' + CONFIG_PATH.src + '**/vendor/**/*.js',
-      '!' + CONFIG_PATH.src + '**/lib/**/*.js',
-      '!' + CONFIG_PATH.src + '**/libs/**/*.js'
-    ]
-  },
-  deployDirectory: [
-    CONFIG_PATH.src + '**/*',
-    '!' + CONFIG_PATH.src + '_*/**',
-    '!' + CONFIG_PATH.src + 'vender/**',
-    '!' + CONFIG_PATH.src + 'vendor/**',
-    '!' + CONFIG_PATH.src + '**/_*.css',
-    '!' + CONFIG_PATH.src + '**/*.scss',
-    '!' + CONFIG_PATH.src + '**/*.es6'
-  ]
-};
+gulp.task('ejs', function buildHTML(){
+  let _target = CONFIG.watchIgnoreDirectory.ejs.slice();
+  _target.unshift(CONFIG.sourceDirectory.ejs);
+
+  let _config_ejs_data = {};
+  if(CONFIG_USER.ejs) _config_ejs_data = { ejs: CONFIG_USER.ejs };
+
+  return gulp.src(_target)
+    .pipe(plumber({
+      errorHandler(error) {
+        notifier.notify({ title: 'EJS エラー', message: error.message });
+        this.emit('end');
+      }
+    }))
+    .pipe(streamUtil(function(){
+      if(CONFIG_USER.ejs){
+        let _current_data = _config_ejs_data.ejs.pages.find(item => item.slug == this.dir);
+        if(_current_data) _config_ejs_data.ejs.current = _current_data;
+      }
+    }))
+    .pipe(ejs(_config_ejs_data, {}, { ext: '' }))
+    .pipe(rename({
+      extname: '.html'
+    }))
+    .pipe(gulp.dest(CONFIG.outputDirectory.dev));
+});
 
 /**
- * IMPORT MODULES
+ * Pug Task
  */
-const gulp           = require('gulp');
-const sass           = require('gulp-sass');
-sass.compiler        = require('node-sass');
-const postcss        = require('gulp-postcss');
-const csscomb        = require('gulp-csscomb');
-const babel          = require('gulp-babel');
-const eslint         = require('gulp-eslint');
-const htmlhint       = require('gulp-htmlhint');
-const cache          = require('gulp-cached');
-const progeny        = require('gulp-progeny');
-const plumber        = require('gulp-plumber');
-const ignore         = require('gulp-ignore');
-const uglify         = require('gulp-uglify');
-const notifier       = require('node-notifier');
-const pixrem         = require('pixrem');
-const postcssOpacity = require('postcss-opacity');
-const autoprefixer   = require('autoprefixer');
-const cssMqpacker    = require('css-mqpacker');
-const cssnano        = require('cssnano');
-const browserSync    = require('browser-sync').create();
-const runSequence    = require('run-sequence');
-runSequence.options.ignoreUndefinedTasks = true;
+gulp.task('pug', ()=>{
+  let _target = CONFIG.watchIgnoreDirectory.pug.slice();
+  _target.unshift(CONFIG.sourceDirectory.pug);
+
+  let _config_pug = {
+    pretty: true
+  };
+
+  return gulp.src(_target)
+    .pipe(plumber({
+      errorHandler(error) {
+        notifier.notify({ title: 'PUG エラー', message: error.message });
+        this.emit('end');
+      }
+    }))
+    .pipe(pug(_config_pug))
+    .pipe(rename(function(path) {
+      path.basename = path.basename.replace('.html','');
+    }))
+    .pipe(gulp.dest(CONFIG.outputDirectory.dev));
+});
 
 /**
  * Sass Task
  */
 gulp.task('sass', ()=>{
 
-  const SASS_CONFIG = {
+  const _config_sass = {
     outputStyle: 'expanded', //nested, compact, compressed, expanded.
     indentType: 'space',
     indentWidth: 2,
     precision: 3
   };
-  const SASS_AUTOPREFIXER_BROWSERS = [
-    'ie >= 10',
-    'ios >= 9',
-    'android >= 4.4',
-    'last 2 versions'
-  ];
-  let POSTCSS_PLUGINS = [
-    autoprefixer({browsers: SASS_AUTOPREFIXER_BROWSERS}),
+  const _config_autoprefixer = {
+    browsers: [
+      'ie >= 10',
+      'ios >= 9',
+      'android >= 4.4',
+      'last 2 versions'
+    ]
+  };
+  let _config_postcss = [
+    autoprefixer(_config_autoprefixer),
     cssMqpacker(),
     pixrem(),
     postcssOpacity()
   ];
-  if(param['--cssmin']) POSTCSS_PLUGINS.push( cssnano({autoprefixer: false}) );
+  if(param['--cssmin']) _config_postcss.push( cssnano({autoprefixer: false}) );
 
   return gulp.src(CONFIG.sourceDirectory.sass)
     .pipe(cache('sass'))
@@ -144,20 +247,20 @@ gulp.task('sass', ()=>{
         notifier.notify({ title: 'Sass コンパイル エラー', message: error.message });
       }
     }))
-    .pipe(sass(SASS_CONFIG).on('error', sass.logError))
+    .pipe(sass(_config_sass).on('error', sass.logError))
     .pipe(csscomb())
-    .pipe(postcss(POSTCSS_PLUGINS))
+    .pipe(postcss(_config_postcss))
     .pipe(gulp.dest(CONFIG.outputDirectory.dev));
 });
 
 /**
  * HtmlLint Task
  */
-gulp.task('htmllint', ()=>{
+gulp.task('html_lint', ()=>{
 
-  const HTMLLINT_CONFIG = {
+  const _config_htmllist = {
     'tagname-lowercase': true,
-    'attr-lowercase': true,
+    'attr-lowercase': ['viewBox'],
     'attr-value-double-quotes': true,
     'attr-value-not-empty': false,
     'attr-no-duplication': true,
@@ -171,7 +274,7 @@ gulp.task('htmllint', ()=>{
     'head-script-disabled': false,
     'img-alt-require': true,
     'doctype-html5': true,
-    'id-class-value': 'false',
+    'id-class-value': false,
     'style-disabled': false,
     'space-tab-mixed-disabled': true,
     'id-class-ad-disabled': true,
@@ -189,8 +292,24 @@ gulp.task('htmllint', ()=>{
         this.emit('end');
       }
     }))
-    .pipe(htmlhint(HTMLLINT_CONFIG))
+    .pipe(htmlhint(_config_htmllist))
     .pipe(htmlhint.reporter());
+});
+
+/**
+ * Minify Task */
+gulp.task('html_min', ()=>{
+  const _config_htmlmin = {
+    collapseWhitespace: true,
+    preserveLineBreaks: true
+  };
+
+  let _target = CONFIG.watchIgnoreDirectory.html.slice();
+  _target.unshift(CONFIG.watchDirectory.html);
+
+  return gulp.src(_target)
+    .pipe(htmlmin(_config_htmlmin))
+    .pipe(gulp.dest(CONFIG.outputDirectory.dev));
 });
 
 /**
@@ -199,6 +318,7 @@ gulp.task('htmllint', ()=>{
 gulp.task('js_babel', ()=>{
   let _target = CONFIG.watchIgnoreDirectory.js.slice();
   _target.unshift(CONFIG.sourceDirectory.es6);
+  _target.unshift(CONFIG.sourceDirectory.es);
 
   return gulp.src(_target)
     .pipe(plumber({
@@ -248,8 +368,9 @@ gulp.task('watch',['server'], ()=>{
   // Set Watch Tasks.
   gulp.watch(CONFIG.watchDirectory.sass,['sass']);
   gulp.watch(CONFIG.watchDirectory.es6,['js_babel']);
-  gulp.watch(CONFIG.watchDirectory.html,['htmllint']);
-  gulp.watch(CONFIG.watchDirectory.js,['js_lint']);
+  gulp.watch(CONFIG.watchDirectory.es,['js_babel']);
+  gulp.watch(CONFIG.watchDirectory.ejs,['ejs']);
+  gulp.watch(CONFIG.watchDirectory.pug,['pug']);
 
   notifier.notify({ title: 'Start Gulp', message: new Date(), sound: 'Glass' });
 
@@ -261,26 +382,78 @@ gulp.task('watch',['server'], ()=>{
 gulp.task('server', ()=>{
 
   // Set BrowserSync server.
+  let _config_bs = {};
   if(param['--proxy']){
-    browserSync.init({
-      proxy: param['--proxy']
-    });
+    _config_bs = {
+      proxy: param['--proxy'],
+      reloadDelay: 300
+    };
   } else {
-    browserSync.init({
+    _config_bs = {
+      reloadDelay: 300,
       server: {
         baseDir: CONFIG.outputDirectory.dev
       }
-    });
+    };
+  }
+  if(CONFIG_USER.host){
+    _config_bs.host = CONFIG_USER.host;
+  }
+  browserSync.init(_config_bs);
+
+  // COPY.
+  if(CONFIG_USER.outputDirectory){
+    let _target = CONFIG.deployDirectory.slice();
+    gulp.watch(_target,['copy']);
   }
 
-  // Browser reload.
-  gulp.watch(CONFIG.watchDirectory.html, browserSync.reload);
-  gulp.watch(CONFIG.watchDirectory.js, browserSync.reload);
+  // HTML.
+  let _target_html = CONFIG.watchIgnoreDirectory.html.slice();
+  _target_html.unshift(CONFIG.watchDirectory.html);
+  if(taskListAdd.find(item => item =='html_min')){
+    gulp.watch(_target_html,['html_min']);
+  } else {
+    if(taskListAdd.find(item => item =='html_lint')){
+      gulp.watch(_target_html,['html_lint']);
+    }
+    gulp.watch(_target_html, browserSync.reload);
+  }
+
+  // PHP.
   gulp.watch(CONFIG.watchDirectory.php, browserSync.reload);
-  gulp.watch(CONFIG.watchDirectory.css, ()=>{
-    gulp.src(CONFIG.watchDirectory.css).pipe(browserSync.stream());
+
+  // JS.
+  if(taskListAdd.find(item => item =='js_min')){
+    gulp.watch(CONFIG.watchDirectory.js,['js_min']);
+  } else {
+    if(taskListAdd.find(item => item =='js_lint')){
+      gulp.watch(CONFIG.watchDirectory.js,['js_lint']);
+    }
+  }
+  gulp.watch(CONFIG.watchDirectory.js, browserSync.reload);
+
+  // CSS.
+  gulp.watch(CONFIG.watchDirectory.css, (file)=>{
+    gulp.src(file.path).pipe(browserSync.stream());
   });
 
+  if(CONFIG_USER.outputDirectory){
+    browserSync.reload();
+  }
+
+});
+
+/**
+ * Copy Task
+ */
+gulp.task('copy', ()=>{
+  notifier.notify({ title: 'Copy', message: new Date(), sound: 'Glass' });
+
+  let _target = CONFIG.deployDirectory.slice();
+
+  return gulp.src(_target)
+    .pipe(ignore.include({isFile: true}))
+    .pipe(gulp.dest(CONFIG.outputDirectory.dev));
 });
 
 /**
@@ -300,15 +473,21 @@ gulp.task('deploy', ()=>{
  * Default Task
  */
 gulp.task('default', (callback)=>{
-  return runSequence(['js_babel','sass'],['htmllint','js_lint'],'watch',callback);
+  if(!taskListAdd.length){
+    return runSequence(['ejs', 'pug', 'sass', 'js_babel'], 'watch', callback);
+  } else {
+    return runSequence(['ejs', 'pug', 'sass', 'js_babel'], taskListAdd, 'watch', callback);
+  }
 });
 
 /**
  * Release Task
  */
-let releaseTaskAdd = [];
-if(param['--jsmin']) releaseTaskAdd.push('js_min');
-if(!releaseTaskAdd.length) releaseTaskAdd = null;
 gulp.task('release', (callback)=>{
-  return runSequence(['js_babel','sass'],['htmllint','js_lint'],releaseTaskAdd,'deploy',callback);
+  if(!taskListAdd.length){
+    return runSequence(['ejs', 'pug', 'sass', 'js_babel'], 'deploy', callback);
+  } else {
+    return runSequence(['ejs', 'pug', 'sass', 'js_babel'], taskListAdd, 'deploy', callback);
+  }
 });
+
