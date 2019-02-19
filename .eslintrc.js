@@ -10,7 +10,10 @@ module.exports = {
     "indent": [
       "error",
       2,
-      {"outerIIFEBody": 0}
+      {
+        "outerIIFEBody": 0,
+        "SwitchCase": 1
+      }
     ],
     "quotes": [
       "error",
@@ -21,5 +24,8 @@ module.exports = {
       "always"
     ],
     "no-console": "off",
+  },
+  "parserOptions": {
+    "sourceType": "module"
   }
 };
